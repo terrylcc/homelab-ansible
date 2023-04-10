@@ -1,0 +1,12 @@
+---
+- hosts: main
+  become: yes
+  roles:
+    - role: k3s/prereq
+    - role: k3s/main
+
+- hosts: node
+  become: yes
+  roles:
+    - role: k3s/prereq
+    - role: k3s/node
