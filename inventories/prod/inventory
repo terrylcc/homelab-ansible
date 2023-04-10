@@ -1,0 +1,9 @@
+[main]
+morpheus.local
+
+[node]
+corinthian.local
+lucienne.local
+
+[all:vars]
+ansible_user=pi
