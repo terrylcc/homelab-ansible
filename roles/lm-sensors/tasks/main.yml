@@ -1,0 +1,9 @@
+---
+- name: Install lm-sensors package
+  apt:
+    name: lm-sensors
+    state: present
+
+- name: Detect and generate a list of kernel modules
+  command: sensors-detect --auto
+
