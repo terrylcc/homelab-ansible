@@ -1,0 +1,6 @@
+---
+- name: Install sysstat package
+  apt:
+    name: sysstat
+    state: present
+
