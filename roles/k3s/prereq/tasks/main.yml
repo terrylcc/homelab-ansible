@@ -41,3 +41,4 @@
 
 - name: Run notified handler tasks
   meta: flush_handlers
+

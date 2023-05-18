@@ -1,25 +1,26 @@
 ---
 - name: Add specified repository into sources list
-  ansible.builtin.apt_repository:
+  apt_repository:
     repo: deb [signed-by=/usr/share/keyrings/azlux-archive-keyring.gpg] http://packages.azlux.fr/debian/ bullseye main
     state: present
     filename: azlux
     update_cache: false
 
 - name: Add an Apt signing key to a specific keyring file
-  ansible.builtin.apt_key:
+  apt_key:
     url: https://azlux.fr/repo.gpg
     keyring: /usr/share/keyrings/azlux-archive-keyring.gpg
 
 - name: Install log2ram package
-  ansible.builtin.apt:
+  apt:
     name: log2ram
     state: present
     update_cache: yes
   notify: reboot
 
 - name: Config the size the log folder will reserve into the RAM
-  ansible.builtin.lineinfile:
+  lineinfile:
     path: /etc/log2ram.conf
     regexp: '^SIZE='
-    line: SIZE=128M
+    line: 'SIZE={{ size }}'
+
