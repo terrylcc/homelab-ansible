@@ -2,7 +2,13 @@
 - hosts: all
   become: yes
   roles:
-    - lm-sensors
+    - lm-sensors/main
     - log2ram
     - sysstat
   
+- hosts: storage_server
+  become: yes
+  roles:
+    - btrfs/prereq
+    - lm-sensors/aux
+
