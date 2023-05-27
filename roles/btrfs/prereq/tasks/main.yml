@@ -1,0 +1,7 @@
+---
+- name: Install btrfs-progs package
+  apt:
+    name: btrfs-progs
+    state: present
+    update_cache: yes
+
