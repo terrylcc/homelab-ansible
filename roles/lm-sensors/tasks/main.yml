@@ -1,7 +1,7 @@
 ---
-- name: Install linux kernel headers for raspberry pi
-  ansible.builtin.apt:
-    name: raspberrypi-kernel-headers
+- name: Install lm-sensors package
+  apt:
+    name: lm-sensors
     state: present
 
 - name: Load the drivetemp kernel module
@@ -12,6 +12,11 @@
         state: present
         persistent: present
   rescue:
+    - name: Install linux kernel headers for raspberry pi
+      ansible.builtin.apt:
+        name: raspberrypi-kernel-headers
+        state: present
+
     - name: Create directory for drivetemp source
       ansible.builtin.file:
         path: "/usr/src/drivetemp-{{ kernel_release }}/"
@@ -51,7 +56,8 @@
         name: drivetemp
         state: present
         persistent: present
+  when: "'storage_server' in group_names"
 
 - name: Detect and generate a list of kernel modules
-  ansible.builtin.command: sensors-detect --auto
+  command: sensors-detect --auto
 
