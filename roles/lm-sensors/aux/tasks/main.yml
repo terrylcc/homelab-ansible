@@ -1,49 +1,57 @@
 ---
 - name: Install linux kernel headers for raspberry pi
-  apt:
+  ansible.builtin.apt:
     name: raspberrypi-kernel-headers
     state: present
 
-- name: Create directory for drivetemp source
-  file:
-    path: "/usr/src/drivetemp-{{ kernel_release }}/"
-    state: directory
+- name: Load the drivetemp kernel module
+  block:
+    - name: Add the drivetemp kernel module 
+      community.general.modprobe:
+        name: drivetemp
+        state: present
+        persistent: present
+  rescue:
+    - name: Create directory for drivetemp source
+      ansible.builtin.file:
+        path: "/usr/src/drivetemp-{{ kernel_release }}/"
+        state: directory
 
-- name: Get drivetemp.c source from raspberry pi kernel source tree
-  get_url:
-    url: "https://raw.githubusercontent.com/raspberrypi/linux/{{ kernel_branch }}/drivers/hwmon/drivetemp.c"
-    dest: "/usr/src/drivetemp-{{ kernel_release }}/drivetemp.c"
+    - name: Get drivetemp.c source from raspberry pi kernel source tree
+      ansible.builtin.get_url:
+        url: "https://raw.githubusercontent.com/raspberrypi/linux/{{ kernel_branch }}/drivers/hwmon/drivetemp.c"
+        dest: "/usr/src/drivetemp-{{ kernel_release }}/drivetemp.c"
 
-- name: Copy Kbuild file to node
-  template:
-    src: Kbuild.j2
-    dest: "/usr/src/drivetemp-{{ kernel_release }}/Kbuild"
+    - name: Copy Kbuild file to node
+      ansible.builtin.template:
+        src: Kbuild.j2
+        dest: "/usr/src/drivetemp-{{ kernel_release }}/Kbuild"
 
-- name: Build the drivetemp.ko kernel module
-  command:
-    chdir: "/usr/src/drivetemp-{{ kernel_release }}"
-    cmd: "make -C /usr/src/linux-headers-{{ kernel_release }} M=/usr/src/drivetemp-{{ kernel_release }}"
+    - name: Build the drivetemp.ko kernel module
+      ansible.builtin.command:
+        chdir: "/usr/src/drivetemp-{{ kernel_release }}"
+        cmd: "make -C /usr/src/linux-headers-{{ kernel_release }} M=/usr/src/drivetemp-{{ kernel_release }}"
 
-- name: Copy the drivetemp.ko kernel module to /usr/lib/modules
-  copy:
-    remote_src: true
-    src: "/usr/src/drivetemp-{{ kernel_release }}/drivetemp.ko"
-    dest: "/usr/lib/modules/{{ kernel_release }}/kernel/drivers/hwmon/drivetemp.ko"
+    - name: Copy the drivetemp.ko kernel module to /usr/lib/modules
+      ansible.builtin.copy:
+        remote_src: true
+        src: "/usr/src/drivetemp-{{ kernel_release }}/drivetemp.ko"
+        dest: "/usr/lib/modules/{{ kernel_release }}/kernel/drivers/hwmon/drivetemp.ko"
 
-- name: Clean up the building directory
-  command:
-    chdir: "/usr/src/drivetemp-{{ kernel_release }}"
-    cmd: "make -C /usr/src/linux-headers-{{ kernel_release }} M=/usr/src/drivetemp-{{ kernel_release }} clean"
+    - name: Clean up the building directory
+      ansible.builtin.command:
+        chdir: "/usr/src/drivetemp-{{ kernel_release }}"
+        cmd: "make -C /usr/src/linux-headers-{{ kernel_release }} M=/usr/src/drivetemp-{{ kernel_release }} clean"
 
-- name: Generate modules.dep and map files
-  command: depmod --all
+    - name: Generate modules.dep and map files
+      ansible.builtin.command: depmod --all
 
-- name: Add the drivetemp kernel module 
-  community.general.modprobe:
-    name: drivetemp
-    state: present
-    persistent: present
+    - name: Add the drivetemp kernel module 
+      community.general.modprobe:
+        name: drivetemp
+        state: present
+        persistent: present
 
 - name: Detect and generate a list of kernel modules
-  command: sensors-detect --auto
+  ansible.builtin.command: sensors-detect --auto
 
