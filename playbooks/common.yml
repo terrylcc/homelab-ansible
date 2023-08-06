@@ -9,4 +9,6 @@
 - hosts: storage_server
   become: yes
   roles:
-    - btrfs/prereq
+    - btrfs
+    - nfs
+
