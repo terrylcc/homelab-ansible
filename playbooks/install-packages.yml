@@ -6,9 +6,3 @@
     - log2ram
     - sysstat
   
-- hosts: storage_server
-  become: yes
-  roles:
-    - btrfs
-    - nfs
-
