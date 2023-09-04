@@ -1,19 +1,8 @@
 [nodes]
-morpheus.local
-corinthian.local
-lucienne.local
+raspberrypi-node-1.local
+raspberrypi-node-2.local
+raspberrypi-node-3.local
 
 [storage_server]
-lucienne.local
-
-[k3s_server]
-morpheus.local
-
-[k3s_agents]
-corinthian.local
-lucienne.local
-
-[k3s_cluster:children]
-k3s_server
-k3s_agents
+raspberrypi-node-3.local
 
