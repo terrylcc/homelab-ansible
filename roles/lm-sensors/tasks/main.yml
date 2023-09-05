@@ -56,7 +56,7 @@
         name: drivetemp
         state: present
         persistent: present
-  when: "'storage_server' in group_names"
+  when: "'storageserver' in group_names"
 
 - name: Detect and generate a list of kernel modules
   command: sensors-detect --auto
