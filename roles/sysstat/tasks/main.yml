@@ -1,6 +1,7 @@
 ---
 - name: Install sysstat package
-  apt:
+  become: true
+  ansible.builtin.apt:
     name: sysstat
     state: present
 

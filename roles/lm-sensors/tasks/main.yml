@@ -1,10 +1,12 @@
 ---
 - name: Install lm-sensors package
-  apt:
+  become: true
+  ansible.builtin.apt:
     name: lm-sensors
     state: present
 
 - name: Load the drivetemp kernel module
+  become: true
   block:
     - name: Add the drivetemp kernel module 
       community.general.modprobe:
@@ -59,5 +61,6 @@
   when: "'storageserver' in group_names"
 
 - name: Detect and generate a list of kernel modules
-  command: sensors-detect --auto
+  become: true
+  ansible.builtin.command: sensors-detect --auto
 

@@ -1,6 +1,7 @@
 ---
 - name: Install cryptsetup package
-  apt:
+  become: true
+  ansible.builtin.apt:
     name: cryptsetup
     state: present
     update_cache: yes

@@ -1,27 +1,40 @@
 ---
 - name: Install nfs-kernel-server package
+  become: true
   ansible.builtin.apt:
     name: nfs-kernel-server
     state: present
     update_cache: yes
 
-- name: Mount /mnt/btrfs/homes directory to /exports
+- name: Create the /srv/nfs directory
+  become: true
+  ansible.builtin.file:
+    path: /srv/nfs
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory 
+
+- name: Mount /mnt/btrfs/appdata directory to /srv/nfss
+  become: true
   ansible.posix.mount:
-    path: /exports/homes
-    src: /mnt/btrfs/homes
+    path: /srv/nfs/appdata
+    src: /mnt/btrfs/appdata
     opts: bind
     state: mounted
     fstype: none
 
-- name: Mount /mnt/btrfs/volumes directory to /exports
+- name: Mount /mnt/btrfs/home directory to /srv/nfs
+  become: true
   ansible.posix.mount:
-    path: /exports/volumes
-    src: /mnt/btrfs/volumes
+    path: /srv/nfs/home
+    src: /mnt/btrfs/home
     opts: bind
     state: mounted
     fstype: none
 
 - name: Configure /etc/exports file
+  become: true
   ansible.builtin.template:
     src: exports.j2
     dest: /etc/exports
@@ -31,6 +44,7 @@
     backup: yes
 
 - name: Restart the nfs-kernel-server service
+  become: true
   ansible.builtin.service:
     name: nfs-kernel-server
     state: restarted
