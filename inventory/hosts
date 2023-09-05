@@ -4,5 +4,12 @@ raspberrypi-node-2.local    ansible_host=192.168.1.3
 raspberrypi-node-3.local    ansible_host=192.168.1.4
 
 [storageserver]
-raspberrypi-node-3.local    ansible_host=192.168.1.4
+raspberrypi-node-3.local
+
+[controller]
+raspberrypi-node-1.local
+
+[workers]
+raspberrypi-node-2.local
+raspberrypi-node-3.local
 
