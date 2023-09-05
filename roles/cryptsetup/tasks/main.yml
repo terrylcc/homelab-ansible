@@ -1,0 +1,7 @@
+---
+- name: Install cryptsetup package
+  apt:
+    name: cryptsetup
+    state: present
+    update_cache: yes
+
