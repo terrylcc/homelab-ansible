@@ -1,7 +1,6 @@
 ---
 - hosts: storageserver
-  become: yes
   roles:
     - btrfs
     - cryptsetup
-
+    - nfs
