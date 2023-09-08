@@ -19,7 +19,7 @@
     name: log2ram
     state: present
     update_cache: yes
-  notify: reboot
+  notify: Reboot
 
 - name: Config the size the log folder will reserve into the RAM
   become: true

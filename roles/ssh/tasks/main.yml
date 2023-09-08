@@ -7,5 +7,5 @@
     state: present
     backup: yes
   notify:
-    - restart ssh
+    - Restart the sshd service
 
