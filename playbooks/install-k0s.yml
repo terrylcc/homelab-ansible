@@ -1,0 +1,14 @@
+---
+- hosts: all
+  roles:
+    - k0s/prereq
+    - k0s/download
+
+- hosts: controller
+  roles:
+    - k0s/controller
+
+- hosts: workers
+  roles:
+    - k0s/worker
+
