@@ -42,11 +42,5 @@
     group: root
     mode: '0644'
     backup: yes
-
-- name: Restart the nfs-kernel-server service
-  become: true
-  ansible.builtin.service:
-    name: nfs-kernel-server
-    state: restarted
-    enabled: true
+  notify: Restart the nfs-kernel-server service
 
