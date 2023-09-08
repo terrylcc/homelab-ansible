@@ -15,20 +15,20 @@
     mode: '0755'
     state: directory 
 
-- name: Mount /mnt/btrfs/appdata directory to /srv/nfss
+- name: Mount /mnt/home directory to /srv/nfs
   become: true
   ansible.posix.mount:
-    path: /srv/nfs/appdata
-    src: /mnt/btrfs/appdata
+    path: /srv/nfs/home
+    src: /mnt/home
     opts: bind
     state: mounted
     fstype: none
 
-- name: Mount /mnt/btrfs/home directory to /srv/nfs
+- name: Mount /mnt/volume directory to /srv/nfs
   become: true
   ansible.posix.mount:
-    path: /srv/nfs/home
-    src: /mnt/btrfs/home
+    path: /srv/nfs/volume
+    src: /mnt/volume
     opts: bind
     state: mounted
     fstype: none
