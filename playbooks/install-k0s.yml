@@ -10,5 +10,5 @@
 
 - hosts: workers
   roles:
-    - k0s/worker
+    - k0s/workers
 
