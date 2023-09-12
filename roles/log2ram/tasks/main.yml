@@ -27,4 +27,5 @@
     path: /etc/log2ram.conf
     regexp: '^SIZE='
     line: 'SIZE={{ size }}'
+  notify: Reboot
 
