@@ -3,7 +3,8 @@
   roles:
     - lm-sensors
     - log2ram
-    - sysstat
+    - nfs/client
     - ssh
+    - sysstat
     - tmux
   

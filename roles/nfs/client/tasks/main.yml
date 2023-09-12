@@ -1,0 +1,9 @@
+---
+- name: Configure /etc/idmapd.conf file
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/idmapd.conf
+    regexp: '^#\sDomain'
+    line: 'Domain = localdomain'
+  notify: Clear idmap cache
+

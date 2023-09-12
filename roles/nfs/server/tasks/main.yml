@@ -25,6 +25,7 @@
   ansible.builtin.lineinfile:
     path: /etc/default/nfs-kernel-server
     line: 'RPCNFSDOPTS="-N 2 -N 3"'
+  notify: Restart the nfs-kernel-server service
 
 - name: Disbale NFS v3 and v4 for mountd
   become: true
@@ -32,6 +33,14 @@
     path: /etc/default/nfs-kernel-server
     regexp: '^RPCMOUNTDOPTS='
     line: 'RPCMOUNTDOPTS="--manage-gids -N 2 -N 3"'
+  notify: Restart the nfs-kernel-server service
+
+- name: Configure /etc/idmapd.conf file
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/idmapd.conf
+    regexp: '^#\sDomain'
+    line: 'Domain = localdomain'
 
 - name: Mask rpcbind.service
   become: true
@@ -71,6 +80,16 @@
     opts: bind
     state: mounted
     fstype: none
+
+- name: Configure nfs4_disable_idmapping option
+  become: true
+  ansible.builtin.template:
+    src: nfsd.j2
+    dest: /etc/modprobe.d/nfsd.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart the nfs-kernel-server service
 
 - name: Configure /etc/exports file
   become: true
