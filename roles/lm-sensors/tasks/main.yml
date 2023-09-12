@@ -58,7 +58,7 @@
         name: drivetemp
         state: present
         persistent: present
-  when: "'storageserver' in group_names"
+  when: "'storagenode' in group_names"
 
 - name: Detect and generate a list of kernel modules
   become: true

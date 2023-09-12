@@ -8,7 +8,7 @@
   roles:
     - k0s/controller
 
-- hosts: workers
+- hosts: worker
   roles:
-    - k0s/workers
+    - k0s/worker
 
