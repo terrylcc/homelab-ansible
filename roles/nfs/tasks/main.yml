@@ -6,6 +6,45 @@
     state: present
     update_cache: yes
 
+- name: Disable statd service
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/default/nfs-common
+    regexp: '^NEED_STATD='
+    line: 'NEED_STATD="no"'
+
+- name: Enable idmapd service
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/default/nfs-common
+    regexp: '^NEED_IDMAPD='
+    line: 'NEED_IDMAPD="yes"'
+
+- name: Disbale NFS v3 and v4 for nfsd
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/default/nfs-kernel-server
+    line: 'RPCNFSDOPTS="-N 2 -N 3"'
+
+- name: Disbale NFS v3 and v4 for mountd
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/default/nfs-kernel-server
+    regexp: '^RPCMOUNTDOPTS='
+    line: 'RPCMOUNTDOPTS="--manage-gids -N 2 -N 3"'
+
+- name: Mask rpcbind.service
+  become: true
+  ansible.builtin.systemd_service:
+    name: rpcbind.service
+    masked: true
+
+- name: Mask rpcbind.socket
+  become: true
+  ansible.builtin.systemd_service:
+    name: rpcbind.socket
+    masked: true
+
 - name: Create the /srv/nfs directory
   become: true
   ansible.builtin.file:
