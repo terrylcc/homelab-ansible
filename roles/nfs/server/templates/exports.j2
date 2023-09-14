@@ -1,4 +1,5 @@
 /srv/nfs	192.168.0.0/16(fsid=0,insecure,rw,sync,no_subtree_check,no_root_squash)
+/srv/nfs/backup	192.168.0.0/16(insecure,rw,sync,nohide,no_subtree_check,no_root_squash)
 /srv/nfs/home	192.168.0.0/16(insecure,rw,sync,nohide,no_subtree_check,no_root_squash)
-/srv/nfs/volume	192.168.0.0/16(insecure,rw,sync,nohide,no_subtree_check,no_root_squash)
+/srv/nfs/volume	192.168.0.0/16(insecure,rw,sync,nohide,no_subtree_check,all_squash,anonuid=0,anongid=0)
 

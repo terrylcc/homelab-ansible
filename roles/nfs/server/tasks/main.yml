@@ -63,6 +63,15 @@
     mode: '0755'
     state: directory 
 
+- name: Mount /mnt/backup directory to /srv/nfs
+  become: true
+  ansible.posix.mount:
+    path: /srv/nfs/backup
+    src: /mnt/backup
+    opts: bind
+    state: mounted
+    fstype: none
+
 - name: Mount /mnt/home directory to /srv/nfs
   become: true
   ansible.posix.mount:
