@@ -93,7 +93,7 @@
 - name: Configure nfs4_disable_idmapping option
   become: true
   ansible.builtin.template:
-    src: nfsd.j2
+    src: nfsd.conf.j2
     dest: /etc/modprobe.d/nfsd.conf
     owner: root
     group: root
