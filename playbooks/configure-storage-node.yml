@@ -4,4 +4,5 @@
     - btrfs
     - cryptsetup
     - nfs/server
+    - samba
 

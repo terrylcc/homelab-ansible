@@ -1,0 +1,49 @@
+---
+- name: Install the samba package
+  become: true
+  ansible.builtin.package:
+    name: samba
+    state: present
+
+- name: Create samba users
+  become: true
+  ansible.builtin.user: 
+    name: "{{ item }}"
+    shell: /usr/sbin/nologin
+  loop:
+    - terryleung
+    - peryleung
+    - winniechu
+
+- name: Create the /srv/samba directory
+  become: true
+  ansible.builtin.file:
+    path: /srv/samba
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+
+- name: Mount /mnt/home directory to /srv/samba
+  become: true
+  ansible.posix.mount:
+    path: "/srv/samba/home/{{ item }}"
+    src: "/mnt/home/{{ item }}"
+    opts: bind
+    state: mounted
+    fstype: none
+  loop:
+    - terryleung
+    - peryleung
+    - winniechu
+
+- name: Config the samba server
+  become: true
+  ansible.builtin.template:
+    src: smb.conf.j2
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart the smbd service
+

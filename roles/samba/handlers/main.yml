@@ -1,0 +1,8 @@
+---
+- name: Restart the smbd service
+  become: true
+  ansible.builtin.systemd:
+    name: smbd
+    state: restarted
+    daemon_reload: true
+
