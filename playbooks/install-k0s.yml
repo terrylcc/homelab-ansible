@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: k0s
   roles:
     - k0s/prereq
     - k0s/download
