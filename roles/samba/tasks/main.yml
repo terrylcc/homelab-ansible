@@ -11,9 +11,9 @@
     name: "{{ item }}"
     shell: /usr/sbin/nologin
   loop:
-    - terryleung
-    - peryleung
-    - winniechu
+    - terryl
+    - peryl
+    - winniec
 
 - name: Create the /srv/samba directory
   become: true
@@ -27,15 +27,15 @@
 - name: Mount /mnt/home directory to /srv/samba
   become: true
   ansible.posix.mount:
-    path: "/srv/samba/home/{{ item }}"
+    path: "/srv/samba/{{ item }}"
     src: "/mnt/home/{{ item }}"
     opts: bind
     state: mounted
     fstype: none
   loop:
-    - terryleung
-    - peryleung
-    - winniechu
+    - terryl
+    - peryl
+    - winniec
 
 - name: Config the samba server
   become: true
@@ -46,4 +46,11 @@
     group: root
     mode: '0644'
   notify: Restart the smbd service
+
+- name: Enable the avahi-daemon.service
+  become: true
+  ansible.builtin.systemd:
+    name: avahi-daemon.service
+    state: started
+    enabled: true
 

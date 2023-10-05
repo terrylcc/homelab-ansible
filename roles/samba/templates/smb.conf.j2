@@ -13,27 +13,14 @@
   writable = yes
   printable = no
 
-[terryshare]
-  comment = Terry's home directory
-  path = /srv/samba/home/terryleung
-  valid users = terryleung
+{% for user in ['terryl', 'peryl', 'winniec'] %}
+[{{ user }}]
+  comment = {{ user }}'s share
+  path = /srv/samba/{{ user }}
+  valid users = {{ user }}
   public = no
   writable = yes
   browseable = yes
 
-[peryshare]
-  comment = Pery's home directory
-  path = /srv/samba/home/peryleung
-  valid users = peryleung
-  public = no
-  writable = yes
-  browseable = yes
-
-[winnieshare]
-  comment = Winnie's home directory
-  path = /srv/samba/home/winniechu
-  valid users = winniechu
-  public = no
-  writable = yes
-  browseable = yes
+{% endfor %}
 
