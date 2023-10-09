@@ -6,12 +6,20 @@
   security = user
   hosts allow = 192.168. 127.
 
-[public]
-  comment = Public share
+[guest]
+  comment = Guest share
   path = /tmp
   public = yes
   writable = yes
   printable = no
+
+[public]
+  comment = Public share
+  path = /srv/samba/public
+  valid users = terryl, peryl, winniec
+  public = no
+  writable = yes
+  browseable = yes
 
 {% for user in ['terryl', 'peryl', 'winniec'] %}
 [{{ user }}]

@@ -33,6 +33,7 @@
     state: mounted
     fstype: none
   loop:
+    - public
     - terryl
     - peryl
     - winniec
