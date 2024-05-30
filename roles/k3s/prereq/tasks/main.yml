@@ -1,0 +1,53 @@
+---
+- name: Enable IPv4 forwarding
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    state: present
+    reload: true
+
+- name: Enable IPv6 forwarding
+  ansible.posix.sysctl:
+    name: net.ipv6.conf.all.forwarding
+    value: "1"
+    state: present
+    reload: true
+  when: ansible_all_ipv6_addresses
+
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
+- name: Allow UFW Exceptions
+  when:
+    - ansible_facts.services['ufw'] is defined
+    - ansible_facts.services['ufw'].state == 'running'
+  block:
+    - name: Get ufw status
+      ansible.builtin.command:
+        cmd: ufw status
+      changed_when: false
+      register: ufw_status
+
+    - name: If ufw enabled, open api port
+      when:
+        - ufw_status['stdout'] == "Status':' active"
+      community.general.ufw:
+        rule: allow
+        port: "{{ api_port }}"
+        proto: tcp
+
+    - name: If ufw enabled, allow default CIDRs
+      when:
+        - ufw_status['stdout'] == "Status':' active"
+      community.general.ufw:
+        rule: allow
+        src: "{{ item }}"
+      loop: "{{ (cluster_cidr + ',' + service_cidr) | split(',') }}"
+
+- name: Enable cgroup via boot commandline if not already enabled
+  ansible.builtin.lineinfile:
+    path: /boot/firmware/cmdline.txt
+    backrefs: true
+    regexp: '^((?!.*\bcgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory\b).*)$'
+    line: '\1 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory'
+  notify: Reboot

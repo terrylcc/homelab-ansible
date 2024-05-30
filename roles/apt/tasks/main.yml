@@ -1,9 +1,7 @@
 ---
 - name: Update and upgrade all packages and dependencies
-  become: true
   ansible.builtin.apt:
     autoclean: true
     cache_valid_time: 3600
     update_cache: true
     upgrade: yes
-

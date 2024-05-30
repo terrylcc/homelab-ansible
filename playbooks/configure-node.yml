@@ -1,10 +1,8 @@
 ---
-- hosts: all
+- name: Configure node
+  hosts: all
+  become: true
   roles:
-    - lm-sensors
-    - log2ram
-    - nfs/client
-    - ssh
-    - sysstat
-    - tmux
-  
+    - role: lm-sensors
+    - role: log2ram
+    - role: sysstat

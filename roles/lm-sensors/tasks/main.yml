@@ -1,66 +1,16 @@
 ---
 - name: Install lm-sensors package
-  become: true
   ansible.builtin.apt:
     name: lm-sensors
     state: present
+    update_cache: true
 
-- name: Load the drivetemp kernel module
-  become: true
-  block:
-    - name: Add the drivetemp kernel module 
-      community.general.modprobe:
-        name: drivetemp
-        state: present
-        persistent: present
-  rescue:
-    - name: Install linux kernel headers for raspberry pi
-      ansible.builtin.apt:
-        name: raspberrypi-kernel-headers
-        state: present
-
-    - name: Create directory for drivetemp source
-      ansible.builtin.file:
-        path: "/usr/src/drivetemp-{{ kernel_release }}/"
-        state: directory
-
-    - name: Get drivetemp.c source from raspberry pi kernel source tree
-      ansible.builtin.get_url:
-        url: "https://raw.githubusercontent.com/raspberrypi/linux/{{ kernel_branch }}/drivers/hwmon/drivetemp.c"
-        dest: "/usr/src/drivetemp-{{ kernel_release }}/drivetemp.c"
-
-    - name: Copy Kbuild file to node
-      ansible.builtin.template:
-        src: Kbuild.j2
-        dest: "/usr/src/drivetemp-{{ kernel_release }}/Kbuild"
-
-    - name: Build the drivetemp.ko kernel module
-      ansible.builtin.command:
-        chdir: "/usr/src/drivetemp-{{ kernel_release }}"
-        cmd: "make -C /usr/src/linux-headers-{{ kernel_release }} M=/usr/src/drivetemp-{{ kernel_release }}"
-
-    - name: Copy the drivetemp.ko kernel module to /usr/lib/modules
-      ansible.builtin.copy:
-        remote_src: true
-        src: "/usr/src/drivetemp-{{ kernel_release }}/drivetemp.ko"
-        dest: "/usr/lib/modules/{{ kernel_release }}/kernel/drivers/hwmon/drivetemp.ko"
-
-    - name: Clean up the building directory
-      ansible.builtin.command:
-        chdir: "/usr/src/drivetemp-{{ kernel_release }}"
-        cmd: "make -C /usr/src/linux-headers-{{ kernel_release }} M=/usr/src/drivetemp-{{ kernel_release }} clean"
-
-    - name: Generate modules.dep and map files
-      ansible.builtin.command: depmod --all
-
-    - name: Add the drivetemp kernel module 
-      community.general.modprobe:
-        name: drivetemp
-        state: present
-        persistent: present
-  when: "'storagenode' in group_names"
+- name: Add the drivetemp kernel module
+  community.general.modprobe:
+    name: drivetemp
+    state: present
+    persistent: present
+  when: ansible_hostname == "raspberrypi-03"
 
 - name: Detect and generate a list of kernel modules
-  become: true
   ansible.builtin.command: sensors-detect --auto
-

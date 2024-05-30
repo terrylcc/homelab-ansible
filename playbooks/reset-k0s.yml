@@ -1,5 +1,0 @@
----
-- hosts: k0s
-  roles:
-    - k0s/reset
-

@@ -1,13 +1,11 @@
 ---
 - name: Install btrfs-progs package
-  become: true
   ansible.builtin.package:
     name: btrfs-progs
     state: present
-
-- name: Install snapper package
-  become: true
-  ansible.builtin.package:
-    name: snapper
-    state: present
-
+    update_cache: true
+# - name: Install snapper package
+#   ansible.builtin.package:
+#     name: snapper
+#     state: present
+#     update_cache: true

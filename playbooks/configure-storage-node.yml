@@ -1,8 +1,0 @@
----
-- hosts: storagenode
-  roles:
-    - btrfs
-    - cryptsetup
-    - nfs/server
-    - samba
-
