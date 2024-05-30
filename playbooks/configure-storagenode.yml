@@ -1,7 +1,0 @@
----
-- name: Configure storagenode
-  hosts: raspberrypi-03
-  become: true
-  roles:
-    - role: btrfs
-    - role: cryptsetup
