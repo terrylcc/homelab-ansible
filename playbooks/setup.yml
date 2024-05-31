@@ -3,6 +3,7 @@
   hosts: all
   become: true
   roles:
+    - role: iscsi
     - role: lm-sensors
     - role: log2ram
     - role: sysstat
