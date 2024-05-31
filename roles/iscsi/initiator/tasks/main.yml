@@ -1,0 +1,56 @@
+---
+- name: Install cifs-utils package
+  ansible.builtin.apt:
+    name: cifs-utils
+    state: present
+    update_cache: true
+
+- name: Install open-iscsi package
+  ansible.builtin.apt:
+    name: open-iscsi
+    state: present
+    update_cache: true
+
+- name: Install lsscsi package
+  ansible.builtin.apt:
+    name: lsscsi
+    state: present
+    update_cache: true
+
+- name: Install multipath-tools package
+  ansible.builtin.apt:
+    name: multipath-tools
+    state: present
+    update_cache: true
+
+- name: Install sg3-utils package
+  ansible.builtin.apt:
+    name: sg3-utils 
+    state: present
+    update_cache: true
+
+- name: Install scsitools package
+  ansible.builtin.apt:
+    name: scsitools
+    state: present
+    update_cache: true
+
+- name: Config multipathing
+  ansible.builtin.template:
+    src: multipath.conf.j2
+    dest: /etc/multipath.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable the multipath-tools.service
+  ansible.builtin.systemd:
+    name: multipath-tools.service
+    state: started
+    enabled: true
+
+- name: Enable the iscsi.service
+  ansible.builtin.systemd:
+    name: iscsi.service
+    state: started
+    enabled: true
