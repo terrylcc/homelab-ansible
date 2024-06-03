@@ -1,0 +1,14 @@
+---
+- name: Install zfs-dkms package
+  ansible.builtin.apt:
+    name: zfs-dkms
+    state: present
+    install_recommends: false
+    update_cache: true
+
+- name: Install zfsutils-linux package
+  ansible.builtin.apt:
+    name: zfsutils-linux
+    state: present
+    install_recommends: false
+    update_cache: true
