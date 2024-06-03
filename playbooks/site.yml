@@ -1,6 +1,15 @@
 ---
-- name: Update and upgrade apt packages
+- name: Configure node
   hosts: all
   become: true
   roles:
-    - apt
+    - role: iscsi/initiator
+    - role: lm-sensors
+    - role: log2ram
+    - role: sysstat
+
+- name: Configure storage node
+  hosts: raspberrypi-03
+  become: true
+  roles:
+    - role: iscsi/target
