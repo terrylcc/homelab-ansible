@@ -1,71 +1,76 @@
 # Ansible Project - Homelab
 
-## Section 1. Authorise SSH logins on cluster nodes
+## Section 1. Flash Raspberry Pi OS
 
-Copy locally available public keys to `~/.ssh/uthorized_keys` file on remote machines
+Using `rpi-imager`, flash Raspberry Pi OS Lite (64bit) to the SD cards
 
-```shell
-$ ssh-copy-id pi@raspberrypi-node-1.local
-```
+## Section 2. Configure and build a Linux kernel with Target Core Mod (TCM) support
 
-## Section 2. Create BTRFS filesystem on top of LUKS encrypted partitions
-
-Wipe empty disks with dm-crypt
+Install Git and the build dependencies
 
 ```shell
-$ cryptsetup open --type plain -d /dev/urandom /dev/<block-device> to_be_wiped
+sudo apt install git bc bison flex libssl-dev libncurses5-dev make
 ```
 
-Wipe the containers with zeros
+Get the Linux kernel sources
 
 ```shell
-$ dd if=/dev/zero of=/dev/mapper/to_be_wiped status=progress bs=1M
+git clone --depth=1 https://github.com/raspberrypi/linux
 ```
 
-Close the temporary containers after wiping
+Prepare the default configuration for Raspberry Pi Compute Module 4
 
 ```shell
-$ cryptsetup close to_be_wiped
+cd linux
+KERNEL=kernel8
+make bcm2711_defconfig
 ```
 
-Generate a keyfile of 2048 random bytes
+Configuring the kernel using `menuconfig`
 
 ```shell
-$ dd bs=512 count=4 if=/dev/random of=/etc/cryptsetup-keys.d/<key-file> iflag=fullblock
+make menuconfig
+
+# Enabel CONFIG_TARGET_CORE
 ```
 
-Deny any access for other users than `root`
+Build and install the kernel, modules, and Device Tree blobs
 
 ```shell
-$ chmod 600 /etc/cryptsetup-keys.d/<key-file>
+make -j4 Image.gz modules dtbs
+sudo make modules_install
+sudo cp arch/arm64/boot/dts/broadcom/*.dtb /boot/firmware/
+sudo cp arch/arm64/boot/dts/overlays/*.dtb* /boot/firmware/overlays/
+sudo cp arch/arm64/boot/dts/overlays/README /boot/firmware/overlays/
+sudo cp arch/arm64/boot/Image.gz /boot/firmware/$KERNEL.img
 ```
 
-Set up encrypted volumes for dm-crypt and LUKS
+## Section 3. Runs the Ansible playbooks
+
+Set up the system packages
 
 ```shell
-$ cryptsetup luksFormat /dev/<block-device> /etc/cryptsetup-keys.d/<key-file>
+ansible-playbook playbooks/site.yml
 ```
 
-Add a *passphrase* for key slot for the encrypted volumes
+Create a K3s cluster
 
 ```shell
-$ cryptsetup luksAddKey --key-file /etc/cryptsetup-keys.d/<key-file> -y /dev/<block-device>
+ansible-playbook --ask-vault-pass playbooks/k3s/install.yml
 ```
 
-Modify `/etc/crypttab` to automate unlocking and mounting on boot
+## Section 4. Create a ZFS pool
 
-```text
-<volume-name>  UUID=<UUID>  /etc/cryptsetup-keys.d/<key-file>
-```
-
-Create btrfs filesystem on encrypted volumes
+Create a mirrored ZFS pool mounted at `/data`
 
 ```shell
-$ mkfs.btrfs -d raid1 -m raid1 /dev/mapper/<volume-name> /dev/mapper/<volume-name>
+sudo zpool create -f -o ashift=12 -m /data tank mirror <id> <id>
 ```
 
-Modify `/etc/fstab` to automate mounting on boot
+Create datasets under the zpool to accommodate Kubernetes persistent data
 
-```text
-UUID=<UUID>  /mnt  btrfs  defaults  2
+```shell
+sudo zfs create tank/k8s
+sudo zfs create tank/k8s/main
+sudo zfs create tank/k8s/main-snapshots
 ```
