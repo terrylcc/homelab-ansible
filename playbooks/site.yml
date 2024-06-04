@@ -13,4 +13,5 @@
   become: true
   roles:
     - role: iscsi/target
+    - role: hdparm
     - role: zfs
