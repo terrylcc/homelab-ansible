@@ -67,6 +67,12 @@ Create a mirrored ZFS pool mounted at `/data`
 sudo zpool create -f -o ashift=12 -m /data tank mirror <id> <id>
 ```
 
+Configure the default checksum algorithm to blake3
+
+```shell
+sudo zfs set checksum=blake3 tank
+```
+
 Create datasets under the zpool to accommodate Kubernetes persistent data
 
 ```shell
