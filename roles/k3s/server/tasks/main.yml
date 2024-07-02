@@ -73,7 +73,7 @@
       ansible.builtin.systemd:
         name: k3s
         daemon_reload: true
-        state: started
+        state: restarted
         enabled: true
 
     - name: Check whether kubectl is installed on control node
